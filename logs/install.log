@@ -1,0 +1,127 @@
+=====================
+INSTALLING FOR DEBIAN
+=====================
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+python3 já é a versão mais nova (3.13.5-1).
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Resumo:
+  Atualizando: 0, Instalando: 0, Removendo: 0, Não atualizando: 20
+
+--------------------
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+python3-pip já é a versão mais nova (25.1.1+dfsg-1).
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Resumo:
+  Atualizando: 0, Instalando: 0, Removendo: 0, Não atualizando: 20
+
+--------------------
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+python3-requests já é a versão mais nova (2.32.3+dfsg-5).
+python3-requests configurado para instalar manualmente.
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Resumo:
+  Atualizando: 0, Instalando: 0, Removendo: 0, Não atualizando: 20
+
+--------------------
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+python3-packaging já é a versão mais nova (25.0-1).
+python3-packaging configurado para instalar manualmente.
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Resumo:
+  Atualizando: 0, Instalando: 0, Removendo: 0, Não atualizando: 20
+
+--------------------
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+python3-psutil já é a versão mais nova (7.0.0-2).
+python3-psutil configurado para instalar manualmente.
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Resumo:
+  Atualizando: 0, Instalando: 0, Removendo: 0, Não atualizando: 20
+
+--------------------
+
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Lendo listas de pacotes...
+Construindo árvore de dependências...
+Lendo informação de estado...
+O seguinte pacote foi automaticamente instalado e não é mais requerido:
+  linux-image-6.12.38+deb13-amd64
+Use 'sudo apt autoremove' para removê-lo.
+
+Instalando:
+  php
+
+Instalando dependências:
+  php8.4
+
+Resumo:
+  Atualizando: 0, Instalando: 2, Removendo: 0, Não atualizando: 20
+  Tamanho de download: 41,3 kB
+  Espaço necessário: 82,9 kB / 159 GB disponível
+
+Obter:1 http://debian.c3sl.ufpr.br/debian trixie/main amd64 php8.4 all 8.4.11-1 [37,4 kB]
+Obter:2 http://debian.c3sl.ufpr.br/debian trixie/main amd64 php all 2:8.4+96 [3.936 B]
+Obtidos 41,3 kB em 2s (21,7 kB/s)
+Selecionando pacote previamente não selecionado php8.4.
+(Lendo banco de dados ... (Lendo banco de dados ... 5%(Lendo banco de dados ... 10%(Lendo banco de dados ... 15%(Lendo banco de dados ... 20%(Lendo banco de dados ... 25%(Lendo banco de dados ... 30%(Lendo banco de dados ... 35%(Lendo banco de dados ... 40%(Lendo banco de dados ... 45%(Lendo banco de dados ... 50%(Lendo banco de dados ... 55%(Lendo banco de dados ... 60%(Lendo banco de dados ... 65%(Lendo banco de dados ... 70%(Lendo banco de dados ... 75%(Lendo banco de dados ... 80%(Lendo banco de dados ... 85%(Lendo banco de dados ... 90%(Lendo banco de dados ... 95%(Lendo banco de dados ... 100%(Lendo banco de dados ... 239020 arquivos e diretórios atualmente instalados).
+Preparando para desempacotar .../php8.4_8.4.11-1_all.deb ...
+Desempacotando php8.4 (8.4.11-1) ...
+Selecionando pacote previamente não selecionado php.
+Preparando para desempacotar .../php_2%3a8.4+96_all.deb ...
+Desempacotando php (2:8.4+96) ...
+Configurando php8.4 (8.4.11-1) ...
+Configurando php (2:8.4+96) ...
+
+--------------------
+
+=========
+COMPLETED
+=========
+
